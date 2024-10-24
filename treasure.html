@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treasure</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            padding: 10px;
+            margin-top: 10px;
+            width: calc(100% - 22px);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #219150;
+        }
+
+        .message {
+            margin-top: 10px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Treasure</h2>
+        <input type="text" id="bonus-code" placeholder="Enter Bonus Code">
+        <button id="bonus-button">Submit Bonus Code</button>
+        <button id="delete-records-button">Delete Records</button>
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        const validBonusCodes = {
+            'JkF5r': 2.00,
+            'QwEr5': 3.00,
+            'ZnB8m': 4.00,
+            'FdT3x': 5.00,
+            'PlY6n': 6.00,
+            'DgH2s': 7.00,
+            'RjU1k': 8.00,
+            'XcV9y': 9.00,
+            'LmN4p': 10.00,
+            'BnM7f': 10.00
+        };
+
+        function submitBonusCode() {
+            const bonusCodeInput = document.getElementById('bonus-code').value.trim();
+            const today = new Date().toISOString().split('T')[0];
+            const lastRedeemDate = localStorage.getItem('lastRedeemDate');
+            const currentBalance = parseFloat(localStorage.getItem('currentBalance')) || 0.00;
+
+            // Prevent redeeming a bonus code multiple times in a single day
+            if (lastRedeemDate === today) {
+                showMessage("You have already redeemed a bonus code today. Try again tomorrow.");
+                return;
+            }
+
+            if (validBonusCodes[bonusCodeInput]) {
+                const bonusAmount = validBonusCodes[bonusCodeInput];
+
+                // Add the bonus to the user's account balance, but do not display it here
+                const newBalance = currentBalance + bonusAmount;
+                localStorage.setItem('currentBalance', newBalance.toFixed(2));
+
+                // Mark the date when the bonus code was redeemed
+                localStorage.setItem('lastRedeemDate', today);
+
+                showMessage(`Bonus code applied! You received ₱${bonusAmount.toFixed(2)}.`, true);
+                document.getElementById('bonus-button').disabled = true; // Disable the button for today
+            } else {
+                showMessage("Invalid bonus code.");
+            }
+
+            document.getElementById('bonus-code').value = ''; // Clear input field
+        }
+
+        function showMessage(message, isSuccess = false) {
+            const messageElement = document.getElementById('message');
+            messageElement.textContent = message;
+            messageElement.style.color = isSuccess ? 'green' : 'red';
+            setTimeout(() => {
+                messageElement.textContent = '';
+            }, 3000);
+        }
+
+        // Function to delete all records including last redeem date and balance
+        function deleteFundingRecords() {
+            localStorage.removeItem('fundingRecords');
+            localStorage.removeItem('lastRedeemDate');
+            localStorage.removeItem('currentBalance'); // Corrected key
+            showMessage("All records and balances have been deleted.", true);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('bonus-button').addEventListener('click', submitBonusCode);
+            document.getElementById('delete-records-button').addEventListener('click', deleteFundingRecords);
+        });
+    </script>
+
+
+
+
+
+       
+    <footer class="footer">
+        <div class="footer-icons">
+            <a href="dashboard.html" class="footer-item">
+                <img src="home-icon.png" alt="Home" class="footer-icon">
+                <span class="icon-label">Home</span>
+            </a>
+            <a href="invest.html" class="footer-item">
+                <img src="invest-icon.png" alt="Invest" class="footer-icon">
+                <span class="icon-label">Invest</span>
+            </a>
+            <a href="teams.html" class="footer-item">
+                <img src="team-icon.png" alt="Teams" class="footer-icon">
+                <span class="icon-label">Teams</span>
+            </a>
+            <a href="mine.html" id="logoutLink" class="footer-item">
+                <img src="mine-icon.png" alt="Mine" class="footer-icon">
+                <span class="icon-label">Mine</span>
+            </a>
+        </div>
+    </footer>
+    <style>
+        .footer {
+            background-color: rgba(0, 128, 0, 0.3); /* Semi-transparent green for glass effect */
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            border-radius: 15px;
+            backdrop-filter: blur(10px); /* Frosted glass blur effect */
+            box-shadow: 0 4px 10px rgba(0, 255, 0, 0.4), 0 2px 20px rgba(0, 128, 0, 0.6); /* Green glowing effect */
+            border: 1px solid rgba(255, 255, 255, 0.2); /* Light border for glass effect */
+            transition: box-shadow 0.3s ease; /* Smooth transition effect */
+        }
+        
+        .footer:hover {
+            box-shadow: 0 6px 15px rgba(0, 255, 0, 0.6), 0 4px 25px rgba(0, 128, 0, 0.8); /* Brighter shine on hover */
+        }
+        
+        .footer-icons {
+            display: flex;
+            justify-content: space-around;
+        }
+        
+        .footer-item {
+            display: flex;
+            flex-direction: column; /* Stack icon and label vertically */
+            align-items: center; /* Center the icon and label */
+            text-decoration: none; /* Remove underline from links */
+        }
+        
+        .footer-icon {
+            width: 40px;
+            height: 40px;
+            filter: brightness(0) invert(1); /* Make the icon white */
+        }
+        
+        .icon-label {
+            color: white; /* White text for the labels */
+            font-size: 14px; /* Adjust size of the label text */
+            margin-top: 5px; /* Space between icon and label */
+        }
+    </style>
+
+</body>
+</html>
